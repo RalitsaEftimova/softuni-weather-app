@@ -23,10 +23,14 @@ import android.view.MenuInflater;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.softuni.weatherModel.WeatherService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
 //        intent.putExtra("LAT", lat);
 //        intent.putExtra("LON", lon);
 //        startActivity(intent);
-
-
 
 
     }
@@ -196,4 +198,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }

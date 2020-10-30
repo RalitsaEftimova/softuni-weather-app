@@ -269,15 +269,16 @@
                     android:text="100 %"/>
 
                 <TextView
+                    android:id="@+id/txt_tomorrow_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txt_tomorrow_temperature"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:text="10"
-                    android:textSize="70sp"
                     android:layout_below="@+id/txt_tomorrow_weather_type"
-                    android:layout_toRightOf="@+id/img_tomorrow_weather_type"/>
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toRightOf="@+id/img_tomorrow_weather_type"
+                    android:text="10"
+                    android:textColor="@android:color/white"
+                    android:textSize="60sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -303,11 +304,11 @@
 
                 <ImageView
                     android:id="@+id/img_tomorrow_weather_type"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="190dp"
+                    android:layout_height="190dp"
                     android:layout_gravity="center"
-                    android:layout_marginStart="34dp"
-                    android:layout_marginLeft="34dp"
+                    android:layout_marginStart="27dp"
+                    android:layout_marginLeft="27dp"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@+id/img_tomorrow_cloudy"
                     android:layout_toRightOf="@+id/img_tomorrow_cloudy"
