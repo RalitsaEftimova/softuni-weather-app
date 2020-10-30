@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@android:color/black"
+    android:id="@+id/container">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_today"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            card_view:cardBackgroundColor="@android:color/holo_blue_light"
+            card_view:cardCornerRadius="8dp">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/txt_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/today"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/txt_weather_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="300dp"
+        android:text="Rain"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_below="@+id/txt_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="30dp"
+        android:text="20/10/2020"/>
+
+        <ImageView
+            android:id="@+id/img_cloudy"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="30dp"
+            android:layout_below="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_wb_cloudy_white_24dp"/>
+
+        <ImageView
+            android:id="@+id/img_toys"
+            android:layout_below="@+id/img_cloudy"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_toys_white_24dp"/>
+        <ImageView
+            android:id="@+id/img_humidity"
+            android:layout_below="@+id/img_toys"
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/ic_colorize_white_24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_cloudy_percent"
+        android:layout_toRightOf="@+id/img_cloudy"
+        android:layout_below="@+id/date"
+        android:layout_marginTop="55dp"
+        android:layout_marginLeft="15dp"
+        android:textColor="@android:color/white"
+        android:text="90 %"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_wind_percent"
+        android:layout_toRightOf="@+id/img_toys"
+        android:layout_below="@+id/txt_cloudy_percent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@android:color/white"
+        android:text="6 m/s"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_humidity_percent"
+        android:layout_toRightOf="@+id/img_humidity"
+        android:layout_below="@+id/txt_wind_percent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@android:color/white"
+        android:text="100 %"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_current_temperature"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:text="10"
+        android:textSize="60sp"
+        android:layout_below="@+id/txt_weather_type"
+        android:layout_toRightOf="@+id/img_weather_type"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_temperature_diff"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:text="10 - 10"
+        android:textSize="15sp"
+        android:layout_below="@+id/txt_current_temperature"
+        android:layout_toRightOf="@+id/img_weather_type"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_detailed_type_weather"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="10dp"
+        android:text="light rain"
+        android:textSize="15sp"
+        android:layout_below="@+id/txt_temperature_diff"
+        android:layout_toRightOf="@+id/img_weather_type"/>
+
+    <ImageView
+        android:id="@+id/img_weather_type"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="34dp"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@+id/img_cloudy"
+        android:layout_toRightOf="@+id/img_cloudy"
+        android:src="@drawable/ic_wi_rain" />
+
+</RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_tomorrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_view_today"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            card_view:cardBackgroundColor="@android:color/holo_blue_light"
+            card_view:cardCornerRadius="8dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <TextView
+                    android:id="@+id/txt_tomorrow_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tomorrow"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="40dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/txt_tomorrow_weather_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginLeft="300dp"
+                    android:text="Rain"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tomorrow_date"
+                    android:layout_below="@+id/txt_tomorrow_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:layout_marginLeft="30dp"
+                    android:text="20/10/2020"/>
+
+                <ImageView
+                    android:id="@+id/img_tomorrow_cloudy"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_below="@+id/tomorrow_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_wb_cloudy_white_24dp"/>
+
+                <ImageView
+                    android:id="@+id/img_tomorrow_toys"
+                    android:layout_below="@+id/img_tomorrow_cloudy"
+                    android:layout_marginLeft="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_toys_white_24dp"/>
+                <ImageView
+                    android:id="@+id/img_tomorrow_humidity"
+                    android:layout_below="@+id/img_tomorrow_toys"
+                    android:layout_marginLeft="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="40dp"
+                    android:src="@drawable/ic_colorize_white_24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_cloudy_percent"
+                    android:layout_toRightOf="@+id/img_tomorrow_cloudy"
+                    android:layout_below="@+id/tomorrow_date"
+                    android:layout_marginTop="55dp"
+                    android:layout_marginLeft="15dp"
+                    android:textColor="@android:color/white"
+                    android:text="90 %"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_wind_percent"
+                    android:layout_toRightOf="@+id/img_tomorrow_toys"
+                    android:layout_below="@+id/txt_tomorrow_cloudy_percent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@android:color/white"
+                    android:text="6 m/s"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_humidity_percent"
+                    android:layout_toRightOf="@+id/img_tomorrow_humidity"
+                    android:layout_below="@+id/txt_tomorrow_wind_percent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@android:color/white"
+                    android:text="100 %"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_temperature"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:text="10"
+                    android:textSize="70sp"
+                    android:layout_below="@+id/txt_tomorrow_weather_type"
+                    android:layout_toRightOf="@+id/img_tomorrow_weather_type"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_temperature_diff"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:text="10 - 10"
+                    android:textSize="15sp"
+                    android:layout_below="@+id/txt_tomorrow_temperature"
+                    android:layout_toRightOf="@+id/img_tomorrow_weather_type"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_tomorrow_detailed_type_weather"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:text="light rain"
+                    android:textSize="15sp"
+                    android:layout_below="@+id/txt_tomorrow_temperature_diff"
+                    android:layout_toRightOf="@+id/img_tomorrow_weather_type"/>
+
+                <ImageView
+                    android:id="@+id/img_tomorrow_weather_type"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="34dp"
+                    android:layout_marginLeft="34dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toEndOf="@+id/img_tomorrow_cloudy"
+                    android:layout_toRightOf="@+id/img_tomorrow_cloudy"
+                    android:src="@drawable/ic_wi_rain" />
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+
+</FrameLayout>
