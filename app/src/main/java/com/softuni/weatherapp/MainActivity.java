@@ -10,7 +10,6 @@ import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -44,11 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     public double lat;
     public double lon;
+    private WeatherService weatherService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initRetrofit();
 
         toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tab_layout);
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new OverallTab(), "Overall");
-//        adapter.addFragment(new DetailsTab(), "Details");
+        adapter.addFragment(new DetailsTab(), "Details");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -199,4 +201,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void initRetrofit() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org/data/2.5/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        weatherService = retrofit.create(WeatherService.class);
+    }
+
+    public WeatherService getWeatherService() {
+        return weatherService;
+    }
 }

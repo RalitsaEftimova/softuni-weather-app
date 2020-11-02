@@ -4,14 +4,12 @@ import com.softuni.weatherModel.WeatherModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +22,6 @@ import java.util.Calendar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OverallTab extends Fragment {
 
@@ -82,7 +78,8 @@ public class OverallTab extends Fragment {
         dateTomorrow.setText(day + 1 + "/" + (month + 1) + "/" + year);
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
-        setUpRetrofit();
+        getCurrentWeatherFromApi();
+        getTomorrowWeatherFromApi();
         return view;
     }
 
@@ -93,30 +90,59 @@ public class OverallTab extends Fragment {
 
     }
 
-    private void setUpRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openweathermap.org/data/2.5/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    private void getTomorrowWeatherFromApi() {
 
-        WeatherService service = retrofit.create(WeatherService.class);
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+
+        Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeather(latNet, lonNet,
+                "37426f016190340c55b693d9a76e5015", 1, "metric");
+        callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
+            @Override
+            public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
+                if (response != null && response.isSuccessful()) {
+                    WeatherModelTomorrow model = response.body();
+
+                    weatherTypeTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getMain());
+                    cloudinessPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getClouds()) + " %");
+                    windPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getSpeed()) + " m/s");
+                    humidityPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getHumidity()) + " %");
+                    int currentTemp = (int) Math.rint(model.getData().get(0).getTemp().getDay());
+                    currentTemperatureTomorrow.setText(currentTemp + "°");
+                    temperatureDifferenceTomorrow.setText((int) Math.rint(model.getData().get(0).getTemp().getMin())
+                            + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax()) + "°");
+                    detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherModelTomorrow> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getCurrentWeatherFromApi() {
+
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
 
         Call<WeatherModel> call = service.getCurrentWeather(latNet, lonNet,
-                "37426f016190340c55b693d9a76e5015", "metric");
+                "09a8a590d1b034cf0cd50777f7e675fd", "metric");
         call.enqueue(new Callback<WeatherModel>() {
             @Override
             public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
                 if (response != null && response.isSuccessful()) {
                     WeatherModel model = response.body();
 
-                   weatherType.setText(model.getWeather().get(0).getMain());
-                    cloudinessPercent.setText((int)Math.rint(model.getClouds().getCloudiness()) + " %");
-                    windPercent.setText((int)Math.rint(model.getWind().getSpeed()) + " m/s");
-                    humidityPercent.setText((int)Math.rint(model.getMain().getHumidity())  + " %");
-                    int currentTemp = (int)Math.rint(model.getMain().getTemperature()) ;
+                    weatherType.setText(model.getWeather().get(0).getMain());
+                    cloudinessPercent.setText((int) Math.rint(model.getClouds().getCloudiness()) + " %");
+                    windPercent.setText((int) Math.rint(model.getWind().getSpeed()) + " m/s");
+                    humidityPercent.setText((int) Math.rint(model.getMain().getHumidity()) + " %");
+                    int currentTemp = (int) Math.rint(model.getMain().getTemperature());
                     currentTemperature.setText(currentTemp + "°");
-                    temperatureDifference.setText((int)Math.rint(model.getMain().getMinTemperature())
-                            + "° - " + (int) Math.rint(model.getMain().getMaxTemperature())+ "°");
+                    temperatureDifference.setText((int) Math.rint(model.getMain().getMinTemperature())
+                            + "° - " + (int) Math.rint(model.getMain().getMaxTemperature()) + "°");
                     detailedTypeWeather.setText(model.getWeather().get(0).getDescription());
                 } else {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
@@ -129,33 +155,7 @@ public class OverallTab extends Fragment {
             }
         });
 
-        Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeather(latNet, lonNet,
-                "37426f016190340c55b693d9a76e5015", 1,"metric");
-        callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
-            @Override
-            public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
-                if (response != null && response.isSuccessful()) {
-                    WeatherModelTomorrow model = response.body();
 
-                    weatherTypeTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getMain());
-                    cloudinessPercentTomorrow.setText((int)Math.rint(model.getData().get(0).getClouds()) + " %");
-                    windPercentTomorrow.setText((int)Math.rint(model.getData().get(0).getSpeed()) + " m/s");
-                    humidityPercentTomorrow.setText((int)Math.rint(model.getData().get(0).getHumidity())  + " %");
-                    int currentTemp = (int)Math.rint(model.getData().get(0).getTemp().getDay()) ;
-                    currentTemperatureTomorrow.setText(currentTemp + "°");
-                    temperatureDifferenceTomorrow.setText((int)Math.rint(model.getData().get(0).getTemp().getMin())
-                            + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax())+ "°");
-                    detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
-                } else {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<WeatherModelTomorrow> call, Throwable t) {
-
-            }
-        });
     }
 }
 

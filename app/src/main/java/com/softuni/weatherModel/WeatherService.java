@@ -12,4 +12,8 @@ public interface WeatherService {
     Call<WeatherModelTomorrow> getTomorrowWeather(@Query("lat") Double lat , @Query("lon") Double lon,
                                                   @Query("appid") String apiKey,@Query("cnt") int countDays,
                                                   @Query("units") String metric);
+    @GET("forecast")
+    Call<WeatherDetailedModel> getDetailedWeather(@Query("lat") Double lat , @Query("lon") Double lon,
+                                                  @Query("appid") String apiKey,@Query("cnt") int countHours,
+                                                  @Query("units") String metric);
 }
