@@ -4,12 +4,15 @@ import com.softuni.weatherModel.WeatherModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +36,8 @@ public class OverallTab extends Fragment {
     TextView currentTemperature;
     TextView temperatureDifference;
     TextView detailedTypeWeather;
+    ImageView weatherImageToday;
+    CardView cardViewToday;
 
     TextView dateTomorrow;
     TextView weatherTypeTomorrow;
@@ -42,6 +47,8 @@ public class OverallTab extends Fragment {
     TextView currentTemperatureTomorrow;
     TextView temperatureDifferenceTomorrow;
     TextView detailedTypeWeatherTomorrow;
+    ImageView weatherImageTomorrow;
+    CardView cardViewTomorrow;
     int year;
     int month;
     int day;
@@ -61,6 +68,8 @@ public class OverallTab extends Fragment {
         currentTemperature = view.findViewById(R.id.txt_current_temperature);
         temperatureDifference = view.findViewById(R.id.txt_temperature_diff);
         detailedTypeWeather = view.findViewById(R.id.txt_detailed_type_weather);
+        weatherImageToday = view.findViewById(R.id.img_weather_type);
+        cardViewToday = view.findViewById(R.id.card_view_today);
 
         dateTomorrow = view.findViewById(R.id.tomorrow_date);
         weatherTypeTomorrow = view.findViewById(R.id.txt_tomorrow_weather_type);
@@ -70,6 +79,8 @@ public class OverallTab extends Fragment {
         currentTemperatureTomorrow = view.findViewById(R.id.txt_tomorrow_temperature);
         temperatureDifferenceTomorrow = view.findViewById(R.id.txt_tomorrow_temperature_diff);
         detailedTypeWeatherTomorrow = view.findViewById(R.id.txt_tomorrow_detailed_type_weather);
+        weatherImageTomorrow = view.findViewById(R.id.img_tomorrow_weather_type);
+        cardViewTomorrow = view.findViewById(R.id.card_view_tomorrow);
 
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -78,8 +89,9 @@ public class OverallTab extends Fragment {
         dateTomorrow.setText(day + 1 + "/" + (month + 1) + "/" + year);
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
-        getCurrentWeatherFromApi();
-        getTomorrowWeatherFromApi();
+
+        refresh();
+
         return view;
     }
 
@@ -90,19 +102,21 @@ public class OverallTab extends Fragment {
 
     }
 
-    private void getTomorrowWeatherFromApi() {
+    private void getTomorrowWeatherFromApi(MainActivity.MainCallback mainCallback) {
 
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
 
         Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeather(latNet, lonNet,
                 "37426f016190340c55b693d9a76e5015", 1, "metric");
         callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
                 if (response != null && response.isSuccessful()) {
                     WeatherModelTomorrow model = response.body();
+                    String weather = model.getData().get(0).getWeatherTomorrow().get(0).getMain();
 
-                    weatherTypeTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getMain());
+                    weatherTypeTomorrow.setText(weather);
                     cloudinessPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getClouds()) + " %");
                     windPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getSpeed()) + " m/s");
                     humidityPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getHumidity()) + " %");
@@ -111,6 +125,34 @@ public class OverallTab extends Fragment {
                     temperatureDifferenceTomorrow.setText((int) Math.rint(model.getData().get(0).getTemp().getMin())
                             + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax()) + "°");
                     detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
+                    if (currentTemp < 15) {
+                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.blue));
+                    } else if (currentTemp >= 15 && currentTemp < 22) {
+                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.green));
+                    } else if (currentTemp >= 22) {
+                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.yellow));
+                    }
+
+                    if (weather.equalsIgnoreCase("thunderstorm")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_lightning);
+                    } else if (weather.equalsIgnoreCase("drizzle")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_sleet);
+                    } else if (weather.equalsIgnoreCase("rain")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_rain);
+                    } else if (weather.equalsIgnoreCase("mist")
+                            || weather.equalsIgnoreCase("fog")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_fog);
+                    } else if (weather.equalsIgnoreCase("clouds")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_cloudy);
+                    } else if (weather.equalsIgnoreCase("various")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_cloudy);
+                    } else if (weather.equalsIgnoreCase("snow")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_snow);
+                    } else if (weather.equalsIgnoreCase("extreme")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_meteor);
+                    } else if (weather.equalsIgnoreCase("clear")) {
+                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_day_sunny);
+                    }
                 } else {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                 }
@@ -123,19 +165,28 @@ public class OverallTab extends Fragment {
         });
     }
 
-    private void getCurrentWeatherFromApi() {
+    private void getCurrentWeatherFromApi(final MainActivity.MainCallback mainCallback) {
 
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
 
         Call<WeatherModel> call = service.getCurrentWeather(latNet, lonNet,
                 "09a8a590d1b034cf0cd50777f7e675fd", "metric");
         call.enqueue(new Callback<WeatherModel>() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
+
+                if(getActivity() != null && isAdded()){
+                    if(mainCallback != null){
+                        mainCallback.onFinished();
+                    }
+                }
+
                 if (response != null && response.isSuccessful()) {
                     WeatherModel model = response.body();
 
-                    weatherType.setText(model.getWeather().get(0).getMain());
+                    String currentWeather = model.getWeather().get(0).getMain();
+                    weatherType.setText(currentWeather);
                     cloudinessPercent.setText((int) Math.rint(model.getClouds().getCloudiness()) + " %");
                     windPercent.setText((int) Math.rint(model.getWind().getSpeed()) + " m/s");
                     humidityPercent.setText((int) Math.rint(model.getMain().getHumidity()) + " %");
@@ -144,6 +195,37 @@ public class OverallTab extends Fragment {
                     temperatureDifference.setText((int) Math.rint(model.getMain().getMinTemperature())
                             + "° - " + (int) Math.rint(model.getMain().getMaxTemperature()) + "°");
                     detailedTypeWeather.setText(model.getWeather().get(0).getDescription());
+
+                    if (currentTemp < 15) {
+                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.blue));
+                    } else if (currentTemp >= 15 && currentTemp < 22) {
+                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.green));
+                    } else if (currentTemp >= 22) {
+                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.yellow));
+                    }
+
+                    if (currentWeather.equalsIgnoreCase("thunderstorm")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_lightning);
+                    } else if (currentWeather.equalsIgnoreCase("drizzle")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_sleet);
+                    } else if (currentWeather.equalsIgnoreCase("rain")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_rain);
+                    } else if (currentWeather.equalsIgnoreCase("mist")
+                            || currentWeather.equalsIgnoreCase("fog")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_fog);
+                    } else if (currentWeather.equalsIgnoreCase("clouds")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_cloudy);
+                    } else if (currentWeather.equalsIgnoreCase("various")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_cloudy);
+                    } else if (currentWeather.equalsIgnoreCase("snow")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_snow);
+                    } else if (currentWeather.equalsIgnoreCase("extreme")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_meteor);
+                    } else if (currentWeather.equalsIgnoreCase("clear")) {
+                        weatherImageToday.setImageResource(R.drawable.ic_wi_day_sunny);
+                    }
+
+
                 } else {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                 }
@@ -152,9 +234,25 @@ public class OverallTab extends Fragment {
             @Override
             public void onFailure(Call<WeatherModel> call, Throwable t) {
 
+                if(getActivity() != null && isAdded()){
+                    if(mainCallback != null){
+                        mainCallback.onFinished();
+                    }
+                }
             }
         });
 
+
+    }
+
+    public void refresh() {
+        getCurrentWeatherFromApi(null);
+        getTomorrowWeatherFromApi(null);
+    }
+
+    public void refresh(MainActivity.MainCallback mainCallback) {
+        getCurrentWeatherFromApi(mainCallback);
+        getTomorrowWeatherFromApi(mainCallback);
 
     }
 }

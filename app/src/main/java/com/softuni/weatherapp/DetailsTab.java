@@ -36,11 +36,11 @@ public class DetailsTab extends Fragment {
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
 
-        getWeatherDetailedFromApi();
+        getWeatherDetailedFromApi(null);
         return view;
     }
 
-    private void getWeatherDetailedFromApi() {
+    public void getWeatherDetailedFromApi(final MainActivity.MainCallback mainCallback) {
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
         Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeather(latNet, lonNet,
                 "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
@@ -48,6 +48,13 @@ public class DetailsTab extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
+
+                if(getActivity() != null && isAdded()){
+                    if(mainCallback != null){
+                        mainCallback.onFinished();
+                    }
+                }
+
                 if (response != null && response.isSuccessful()) {
                     WeatherDetailedModel model = response.body();
 
@@ -60,6 +67,11 @@ public class DetailsTab extends Fragment {
 
             @Override
             public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
+                if(getActivity() != null && isAdded()){
+                    if(mainCallback != null){
+                        mainCallback.onFinished();
+                    }
+                }
 
             }
         });

@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class WeatherDetailsFragmentViewHolder extends RecyclerView.ViewHolder {
@@ -13,6 +14,7 @@ public class WeatherDetailsFragmentViewHolder extends RecyclerView.ViewHolder {
     ImageView weatherPicture;
     TextView detailsTemperature;
     TextView detailsDescription;
+    CardView cardView;
 
     public WeatherDetailsFragmentViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,6 +23,7 @@ public class WeatherDetailsFragmentViewHolder extends RecyclerView.ViewHolder {
         weatherPicture = itemView.findViewById(R.id.img_weather);
         detailsTemperature = itemView.findViewById(R.id.txt_details_temperature);
         detailsDescription = itemView.findViewById(R.id.details_weather_description);
+        cardView = itemView.findViewById(R.id.card_view_detailed);
 
     }
 }

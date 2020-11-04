@@ -1,5 +1,7 @@
 package com.softuni.weatherapp;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,22 +18,36 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
+import com.softuni.weatherModel.WeatherDetailedModel;
 import com.softuni.weatherModel.WeatherService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    public interface MainCallback{
+        void onFinished();
+    }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -40,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     TabAdapter adapter;
     TextView txtCity;
+    ProgressBar progressBar;
+//    Button refresh;
     private LocationManager locationManager;
     public double lat;
     public double lon;
@@ -56,8 +74,21 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         txtCity = findViewById(R.id.editLocation);
+        progressBar = findViewById(R.id.simpleProgressBar);
+//        refresh = findViewById(R.id.action_bar_refresh);
+
+
 
         setSupportActionBar(toolbar);
+
+//        refresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ((OverallTab)adapter.getItem(0)).refresh();
+//            }
+//        });
+
+
 
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new OverallTab(), "Overall");
@@ -72,20 +103,36 @@ public class MainActivity extends AppCompatActivity {
         lon = location.getLongitude();
         txtCity.setText(getLocationName(lat, lon));
 
-
-//
-//        Intent intent = new Intent(this, OverallTab.class);
-//        intent.putExtra("LAT", lat);
-//        intent.putExtra("LON", lon);
-//        startActivity(intent);
-
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu, menu);
         return true;
+    }
+
+    private MainCallback mainCallback = new MainCallback() {
+        @Override
+        public void onFinished() {
+            hideProgressBar();
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.action_bar_refresh){
+            progressBar.setVisibility(View.VISIBLE);
+
+            ((OverallTab)adapter.getItem(0)).refresh(mainCallback);
+            ((DetailsTab)adapter.getItem(1)).getWeatherDetailedFromApi(mainCallback);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void hideProgressBar(){
+        progressBar.setVisibility(View.GONE);
     }
 
     public String getLocationName(double lattitude, double longitude) {

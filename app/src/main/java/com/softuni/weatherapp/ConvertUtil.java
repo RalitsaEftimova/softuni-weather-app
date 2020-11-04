@@ -2,17 +2,25 @@ package com.softuni.weatherapp;
 
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.softuni.weatherModel.WeatherDetailedModel;
+import com.softuni.weatherModel.WeatherService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ConvertUtil {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public  class ConvertUtil extends MainActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static List<WeatherDetailsFragmentAdapter.AdapterDetailModel>
@@ -56,4 +64,35 @@ public class ConvertUtil {
 
         return dateAndHour;
     }
+
+//    public  void getWeatherDetailedFromApi(final RecyclerView recyclerView) {
+//        WeatherService service = getWeatherService();
+//        Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeather(lat, lon,
+//                "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
+//        callDetailedWeather.enqueue(new Callback<WeatherDetailedModel>() {
+//            @RequiresApi(api = Build.VERSION_CODES.N)
+//            @Override
+//            public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
+//                if (response != null && response.isSuccessful()) {
+//                    WeatherDetailedModel model = response.body();
+//
+//                    setupWeatherDetailedFragmentAdapter(ConvertUtil.convertFromWeatherDetailModelToDetailAdapterData(model),recyclerView);
+//
+//                } else {
+//                    Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
+//
+//            }
+//        });
+//    }
+//
+//    private void setupWeatherDetailedFragmentAdapter(List<WeatherDetailsFragmentAdapter.AdapterDetailModel> dataForAdapter, RecyclerView recyclerView) {
+//        WeatherDetailsFragmentAdapter detailsFragmentAdapter = new WeatherDetailsFragmentAdapter(dataForAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+//        recyclerView.setAdapter(detailsFragmentAdapter);
+//    }
 }
