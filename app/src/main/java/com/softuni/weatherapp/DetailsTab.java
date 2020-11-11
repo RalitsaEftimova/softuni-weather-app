@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ public class DetailsTab extends Fragment {
     List<WeatherDetailedModel.WeatherDetailedData> data;
     double latNet;
     double lonNet;
+    String city;
+    SwipeRefreshLayout swipeRefresh;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,10 +38,20 @@ public class DetailsTab extends Fragment {
 
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
-
-        getWeatherDetailedFromApi(null);
+        city =   ((MainActivity) getActivity()).txtCity.getText().toString();
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            city =   ((MainActivity) getActivity()).txtCity.getText().toString();
+            getDetailedCityWeather(null, city);
+//            getWeatherDetailedFromApi(null);
+        }
+    });
+        getDetailedCityWeather(null, city);
+//    getWeatherDetailedFromApi(null);
         return view;
-    }
+}
 
     public void getWeatherDetailedFromApi(final MainActivity.MainCallback mainCallback) {
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
@@ -53,6 +66,8 @@ public class DetailsTab extends Fragment {
                     if(mainCallback != null){
                         mainCallback.onFinished();
                     }
+
+                    swipeRefresh.setRefreshing(false);
                 }
 
                 if (response != null && response.isSuccessful()) {
@@ -71,12 +86,53 @@ public class DetailsTab extends Fragment {
                     if(mainCallback != null){
                         mainCallback.onFinished();
                     }
+
+                    swipeRefresh.setRefreshing(false);
                 }
 
             }
         });
     }
+   public void getDetailedCityWeather(final MainActivity.MainCallback mainCallback, String city){
+       WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+       Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeatherByCity(city,
+               "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
+       callDetailedWeather.enqueue(new Callback<WeatherDetailedModel>() {
+           @RequiresApi(api = Build.VERSION_CODES.N)
+           @Override
+           public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
 
+               if(getActivity() != null && isAdded()){
+                   if(mainCallback != null){
+                       mainCallback.onFinished();
+                   }
+
+                   swipeRefresh.setRefreshing(false);
+               }
+
+               if (response != null && response.isSuccessful()) {
+                   WeatherDetailedModel model = response.body();
+
+                   setupWeatherDetailedFragmentAdapter(ConvertUtil.convertFromWeatherDetailModelToDetailAdapterData(model));
+
+               } else {
+                   Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+               }
+           }
+
+           @Override
+           public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
+               if(getActivity() != null && isAdded()){
+                   if(mainCallback != null){
+                       mainCallback.onFinished();
+                   }
+
+                   swipeRefresh.setRefreshing(false);
+               }
+
+           }
+       });
+    }
     private void setupWeatherDetailedFragmentAdapter(List<WeatherDetailsFragmentAdapter.AdapterDetailModel> dataForAdapter) {
         WeatherDetailsFragmentAdapter detailsFragmentAdapter = new WeatherDetailsFragmentAdapter(dataForAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

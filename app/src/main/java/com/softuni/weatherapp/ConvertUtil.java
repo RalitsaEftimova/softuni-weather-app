@@ -1,26 +1,33 @@
 package com.softuni.weatherapp;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softuni.weatherModel.WeatherDetailedModel;
+import com.softuni.weatherModel.WeatherModel;
 import com.softuni.weatherModel.WeatherService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public  class ConvertUtil extends MainActivity {
+import static com.google.android.material.internal.ContextUtils.getActivity;
+
+
+public  class ConvertUtil  {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static List<WeatherDetailsFragmentAdapter.AdapterDetailModel>
@@ -65,34 +72,41 @@ public  class ConvertUtil extends MainActivity {
         return dateAndHour;
     }
 
-//    public  void getWeatherDetailedFromApi(final RecyclerView recyclerView) {
-//        WeatherService service = getWeatherService();
-//        Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeather(lat, lon,
-//                "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
-//        callDetailedWeather.enqueue(new Callback<WeatherDetailedModel>() {
-//            @RequiresApi(api = Build.VERSION_CODES.N)
-//            @Override
-//            public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
-//                if (response != null && response.isSuccessful()) {
-//                    WeatherDetailedModel model = response.body();
-//
-//                    setupWeatherDetailedFragmentAdapter(ConvertUtil.convertFromWeatherDetailModelToDetailAdapterData(model),recyclerView);
-//
-//                } else {
-//                    Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
-//
-//            }
-//        });
-//    }
-//
-//    private void setupWeatherDetailedFragmentAdapter(List<WeatherDetailsFragmentAdapter.AdapterDetailModel> dataForAdapter, RecyclerView recyclerView) {
-//        WeatherDetailsFragmentAdapter detailsFragmentAdapter = new WeatherDetailsFragmentAdapter(dataForAdapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-//        recyclerView.setAdapter(detailsFragmentAdapter);
-//    }
+    public static void setTemperatureBackgroundColor(int temperature, CardView cardView) {
+        if (temperature < 15) {
+            cardView.setCardBackgroundColor(cardView.getResources().getColor(R.color.blue));
+        } else if (temperature < 22) {
+            cardView.setCardBackgroundColor(cardView.getResources().getColor(R.color.green));
+        } else {
+            cardView.setCardBackgroundColor(cardView.getResources().getColor(R.color.yellow));
+        }
+    }
+
+    public static void setImageWeather(String weather, ImageView weatherImage) {
+        if (weather.equalsIgnoreCase("thunderstorm")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_lightning);
+        } else if (weather.equalsIgnoreCase("drizzle")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_sleet);
+        } else if (weather.equalsIgnoreCase("rain")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_rain);
+        } else if (weather.equalsIgnoreCase(
+                "mist")
+                || weather.equalsIgnoreCase("fog")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_fog);
+        } else if (weather.equalsIgnoreCase("clouds")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_cloudy);
+        } else if (weather.equalsIgnoreCase("various")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_cloudy);
+        } else if (weather.equalsIgnoreCase("snow")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_snow);
+        } else if (weather.equalsIgnoreCase("extreme")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_meteor);
+        } else if (weather.equalsIgnoreCase("clear")) {
+            weatherImage.setImageResource(R.drawable.ic_wi_day_sunny);
+        }
+    }
+
+
+
+
 }

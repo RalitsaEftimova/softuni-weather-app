@@ -11,4 +11,6 @@
     <string name="m_per_s_placeholder">%d m/s</string>
     <string name="details">Details</string>
     <string name="overall">Overall</string>
+    <string name="no_results">No Results</string>
+    <string name="search">Search</string>
 </resources>

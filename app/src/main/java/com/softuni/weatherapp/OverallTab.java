@@ -102,68 +102,6 @@ public class OverallTab extends Fragment {
 
     }
 
-    private void getTomorrowWeatherFromApi(MainActivity.MainCallback mainCallback) {
-
-        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
-
-        Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeather(latNet, lonNet,
-                "37426f016190340c55b693d9a76e5015", 1, "metric");
-        callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
-            @SuppressLint("ResourceAsColor")
-            @Override
-            public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
-                if (response != null && response.isSuccessful()) {
-                    WeatherModelTomorrow model = response.body();
-                    String weather = model.getData().get(0).getWeatherTomorrow().get(0).getMain();
-
-                    weatherTypeTomorrow.setText(weather);
-                    cloudinessPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getClouds()) + " %");
-                    windPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getSpeed()) + " m/s");
-                    humidityPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getHumidity()) + " %");
-                    int currentTemp = (int) Math.rint(model.getData().get(0).getTemp().getDay());
-                    currentTemperatureTomorrow.setText(currentTemp + "°");
-                    temperatureDifferenceTomorrow.setText((int) Math.rint(model.getData().get(0).getTemp().getMin())
-                            + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax()) + "°");
-                    detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
-                    if (currentTemp < 15) {
-                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.blue));
-                    } else if (currentTemp >= 15 && currentTemp < 22) {
-                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.green));
-                    } else if (currentTemp >= 22) {
-                        cardViewTomorrow.setCardBackgroundColor(getResources().getColor(R.color.yellow));
-                    }
-
-                    if (weather.equalsIgnoreCase("thunderstorm")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_lightning);
-                    } else if (weather.equalsIgnoreCase("drizzle")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_sleet);
-                    } else if (weather.equalsIgnoreCase("rain")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_rain);
-                    } else if (weather.equalsIgnoreCase("mist")
-                            || weather.equalsIgnoreCase("fog")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_fog);
-                    } else if (weather.equalsIgnoreCase("clouds")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_cloudy);
-                    } else if (weather.equalsIgnoreCase("various")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_cloudy);
-                    } else if (weather.equalsIgnoreCase("snow")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_snow);
-                    } else if (weather.equalsIgnoreCase("extreme")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_meteor);
-                    } else if (weather.equalsIgnoreCase("clear")) {
-                        weatherImageTomorrow.setImageResource(R.drawable.ic_wi_day_sunny);
-                    }
-                } else {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<WeatherModelTomorrow> call, Throwable t) {
-
-            }
-        });
-    }
 
     private void getCurrentWeatherFromApi(final MainActivity.MainCallback mainCallback) {
 
@@ -176,8 +114,8 @@ public class OverallTab extends Fragment {
             @Override
             public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
 
-                if(getActivity() != null && isAdded()){
-                    if(mainCallback != null){
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
                         mainCallback.onFinished();
                     }
                 }
@@ -196,35 +134,8 @@ public class OverallTab extends Fragment {
                             + "° - " + (int) Math.rint(model.getMain().getMaxTemperature()) + "°");
                     detailedTypeWeather.setText(model.getWeather().get(0).getDescription());
 
-                    if (currentTemp < 15) {
-                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.blue));
-                    } else if (currentTemp >= 15 && currentTemp < 22) {
-                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.green));
-                    } else if (currentTemp >= 22) {
-                        cardViewToday.setCardBackgroundColor(getResources().getColor(R.color.yellow));
-                    }
-
-                    if (currentWeather.equalsIgnoreCase("thunderstorm")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_lightning);
-                    } else if (currentWeather.equalsIgnoreCase("drizzle")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_sleet);
-                    } else if (currentWeather.equalsIgnoreCase("rain")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_rain);
-                    } else if (currentWeather.equalsIgnoreCase("mist")
-                            || currentWeather.equalsIgnoreCase("fog")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_fog);
-                    } else if (currentWeather.equalsIgnoreCase("clouds")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_cloudy);
-                    } else if (currentWeather.equalsIgnoreCase("various")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_cloudy);
-                    } else if (currentWeather.equalsIgnoreCase("snow")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_snow);
-                    } else if (currentWeather.equalsIgnoreCase("extreme")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_meteor);
-                    } else if (currentWeather.equalsIgnoreCase("clear")) {
-                        weatherImageToday.setImageResource(R.drawable.ic_wi_day_sunny);
-                    }
-
+                    ConvertUtil.setTemperatureBackgroundColor(currentTemp, cardViewToday);
+                    ConvertUtil.setImageWeather(currentWeather, weatherImageToday);
 
                 } else {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
@@ -234,15 +145,134 @@ public class OverallTab extends Fragment {
             @Override
             public void onFailure(Call<WeatherModel> call, Throwable t) {
 
-                if(getActivity() != null && isAdded()){
-                    if(mainCallback != null){
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
                         mainCallback.onFinished();
                     }
                 }
             }
         });
+    }
 
+    private void getTomorrowWeatherFromApi(MainActivity.MainCallback mainCallback) {
 
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+
+        Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeather(latNet, lonNet,
+                "37426f016190340c55b693d9a76e5015", 1, "metric");
+        callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
+                if (response != null && response.isSuccessful()) {
+                    WeatherModelTomorrow model = response.body();
+                    String weather = model.getData().get(0).getWeatherTomorrow().get(0).getMain();
+
+                    weatherTypeTomorrow.setText(weather);
+                    cloudinessPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getClouds()) + " %");
+                    windPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getSpeed()) + " m/s");
+                    humidityPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getHumidity()) + " %");
+                    int tomorrowTemp = (int) Math.rint(model.getData().get(0).getTemp().getDay());
+                    currentTemperatureTomorrow.setText(tomorrowTemp + "°");
+                    temperatureDifferenceTomorrow.setText((int) Math.rint(model.getData().get(0).getTemp().getMin())
+                            + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax()) + "°");
+                    detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
+
+                    ConvertUtil.setTemperatureBackgroundColor(tomorrowTemp, cardViewTomorrow);
+                    ConvertUtil.setImageWeather(weather, weatherImageTomorrow);
+
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherModelTomorrow> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getCurrentCityWeather(final MainActivity.MainCallback mainCallback, String city) {
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+
+        Call<WeatherModel> call = service.getCurrentWeatherByCity(city, "37426f016190340c55b693d9a76e5015", "metric");
+        call.enqueue(new Callback<WeatherModel>() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onResponse(Call<WeatherModel> call, Response<WeatherModel> response) {
+
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
+                        mainCallback.onFinished();
+                    }
+                }
+
+                if (response != null && response.isSuccessful()) {
+                    WeatherModel model = response.body();
+
+                    String currentWeather = model.getWeather().get(0).getMain();
+                    weatherType.setText(currentWeather);
+                    cloudinessPercent.setText((int) Math.rint(model.getClouds().getCloudiness()) + " %");
+                    windPercent.setText((int) Math.rint(model.getWind().getSpeed()) + " m/s");
+                    humidityPercent.setText((int) Math.rint(model.getMain().getHumidity()) + " %");
+                    int currentTemp = (int) Math.rint(model.getMain().getTemperature());
+                    currentTemperature.setText(currentTemp + "°");
+                    temperatureDifference.setText((int) Math.rint(model.getMain().getMinTemperature())
+                            + "° - " + (int) Math.rint(model.getMain().getMaxTemperature()) + "°");
+                    detailedTypeWeather.setText(model.getWeather().get(0).getDescription());
+
+                    ConvertUtil.setTemperatureBackgroundColor(currentTemp, cardViewToday);
+                    ConvertUtil.setImageWeather(currentWeather, weatherImageToday);
+
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getTomorrowCityWeather(final MainActivity.MainCallback mainCallback, String city){
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+
+        Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeatherByCity(city,
+                "37426f016190340c55b693d9a76e5015", 1, "metric");
+        callTomorrowWeather.enqueue(new Callback<WeatherModelTomorrow>() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onResponse(Call<WeatherModelTomorrow> call, Response<WeatherModelTomorrow> response) {
+                if (response != null && response.isSuccessful()) {
+                    WeatherModelTomorrow model = response.body();
+                    String weather = model.getData().get(0).getWeatherTomorrow().get(0).getMain();
+
+                    weatherTypeTomorrow.setText(weather);
+                    cloudinessPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getClouds()) + " %");
+                    windPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getSpeed()) + " m/s");
+                    humidityPercentTomorrow.setText((int) Math.rint(model.getData().get(0).getHumidity()) + " %");
+                    int tomorrowTemp = (int) Math.rint(model.getData().get(0).getTemp().getDay());
+                    currentTemperatureTomorrow.setText(tomorrowTemp + "°");
+                    temperatureDifferenceTomorrow.setText((int) Math.rint(model.getData().get(0).getTemp().getMin())
+                            + "° - " + (int) Math.rint(model.getData().get(0).getTemp().getMax()) + "°");
+                    detailedTypeWeatherTomorrow.setText(model.getData().get(0).getWeatherTomorrow().get(0).getDescription());
+
+                    ConvertUtil.setTemperatureBackgroundColor(tomorrowTemp, cardViewTomorrow);
+                    ConvertUtil.setImageWeather(weather, weatherImageTomorrow);
+
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherModelTomorrow> call, Throwable t) {
+
+            }
+        });
     }
 
     public void refresh() {
