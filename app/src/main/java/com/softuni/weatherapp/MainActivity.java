@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -24,7 +25,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -58,10 +62,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    public interface MainCallback {
-        void onFinished();
-    }
-
+    private String city;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     Toolbar toolbar;
@@ -83,14 +84,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initRetrofit();
-
         toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         txtCity = findViewById(R.id.editLocation);
         progressBar = findViewById(R.id.simpleProgressBar);
 
+        initRetrofit();
         setSupportActionBar(toolbar);
 
         adapter = new TabAdapter(getSupportFragmentManager());
@@ -98,11 +98,12 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new DetailsTab(), "Details");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+
         txtCity.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String city = txtCity.getText().toString();
+                    city = txtCity.getText().toString();
                     ((OverallTab) adapter.getItem(0)).getCurrentCityWeather(null, city);
                     ((OverallTab) adapter.getItem(0)).getTomorrowCityWeather(null, city);
                     ((DetailsTab) adapter.getItem(1)).getDetailedCityWeather(mainCallback, city);
@@ -115,13 +116,27 @@ public class MainActivity extends AppCompatActivity {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             checkLocationPermission();
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-            txtCity.setText(getLocationName(lat, lon));
+            if (!(location == null)) {
+                setCityFromCoords(location);
 
+            } else {
+                setDefaultCityIfMissCoords();
+            }
         } else {
             Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setCityFromCoords(Location location) {
+        lat = location.getLatitude();
+        lon = location.getLongitude();
+        txtCity.setText(getLocationName(lat, lon));
+    }
+
+    private void setDefaultCityIfMissCoords() {
+        txtCity.setText(R.string.sofia);
+        city = txtCity.getText().toString();
+        Toast.makeText(this, "Your location didn't found.Displayed Sofia city", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,9 +147,15 @@ public class MainActivity extends AppCompatActivity {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             checkLocationPermission();
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-            txtCity.setText(getLocationName(lat, lon));
+            if (!(location == null)) {
+                lat = location.getLatitude();
+                lon = location.getLongitude();
+                txtCity.setText(getLocationName(lat, lon));
+            } else {
+                txtCity.setText(R.string.sofia);
+                city = txtCity.getText().toString();
+                Toast.makeText(this, "Your location didn't found.Displayed Sofia city", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
         }
@@ -146,7 +167,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private MainCallback mainCallback = new MainCallback() {
+    public String getCity() {
+        return city;
+    }
+
+    private final MainCallback mainCallback = new MainCallback() {
         @Override
         public void onFinished() {
             hideProgressBar();
@@ -158,20 +183,21 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.action_bar_search) {
 
-            String city = txtCity.getText().toString();
+            city = txtCity.getText().toString();
             ((OverallTab) adapter.getItem(0)).getCurrentCityWeather(null, city);
             ((OverallTab) adapter.getItem(0)).getTomorrowCityWeather(null, city);
             ((DetailsTab) adapter.getItem(1)).getDetailedCityWeather(mainCallback, city);
 
+
         } else if (item.getItemId() == R.id.action_bar_refresh) {
             progressBar.setVisibility(View.VISIBLE);
             if (isNetworkOnline()) {
-                String city = txtCity.getText().toString();
-                if (!TextUtils.isEmpty(city)){
+                city = txtCity.getText().toString();
+                if (!TextUtils.isEmpty(city)) {
                     ((OverallTab) adapter.getItem(0)).getCurrentCityWeather(null, city);
                     ((OverallTab) adapter.getItem(0)).getTomorrowCityWeather(null, city);
                     ((DetailsTab) adapter.getItem(1)).getDetailedCityWeather(mainCallback, city);
-                }else {
+                } else {
                     locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     checkLocationPermission();
                     Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -185,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
-
             } else {
                 Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
             }
@@ -194,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
-
+  
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
     }
@@ -341,5 +366,9 @@ public class MainActivity extends AppCompatActivity {
 
     public WeatherService getWeatherService() {
         return weatherService;
+    }
+
+    public interface MainCallback {
+        void onFinished();
     }
 }

@@ -38,20 +38,21 @@ public class DetailsTab extends Fragment {
 
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
-        city =   ((MainActivity) getActivity()).txtCity.getText().toString();
+        city = ((MainActivity) getActivity()).txtCity.getText().toString();
         swipeRefresh = view.findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            city =   ((MainActivity) getActivity()).txtCity.getText().toString();
-            getDetailedCityWeather(null, city);
-//            getWeatherDetailedFromApi(null);
-        }
-    });
+            @Override
+            public void onRefresh() {
+                city = ((MainActivity) getActivity()).txtCity.getText().toString();
+                getDetailedCityWeather(null, city);
+
+            }
+        });
+        getWeatherDetailedFromApi(null);
         getDetailedCityWeather(null, city);
-//    getWeatherDetailedFromApi(null);
+
         return view;
-}
+    }
 
     public void getWeatherDetailedFromApi(final MainActivity.MainCallback mainCallback) {
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
@@ -62,8 +63,8 @@ public class DetailsTab extends Fragment {
             @Override
             public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
 
-                if(getActivity() != null && isAdded()){
-                    if(mainCallback != null){
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
                         mainCallback.onFinished();
                     }
 
@@ -82,8 +83,8 @@ public class DetailsTab extends Fragment {
 
             @Override
             public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
-                if(getActivity() != null && isAdded()){
-                    if(mainCallback != null){
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
                         mainCallback.onFinished();
                     }
 
@@ -93,46 +94,48 @@ public class DetailsTab extends Fragment {
             }
         });
     }
-   public void getDetailedCityWeather(final MainActivity.MainCallback mainCallback, String city){
-       WeatherService service = ((MainActivity) getActivity()).getWeatherService();
-       Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeatherByCity(city,
-               "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
-       callDetailedWeather.enqueue(new Callback<WeatherDetailedModel>() {
-           @RequiresApi(api = Build.VERSION_CODES.N)
-           @Override
-           public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
 
-               if(getActivity() != null && isAdded()){
-                   if(mainCallback != null){
-                       mainCallback.onFinished();
-                   }
+    public void getDetailedCityWeather(final MainActivity.MainCallback mainCallback, String city) {
+        WeatherService service = ((MainActivity) getActivity()).getWeatherService();
+        Call<WeatherDetailedModel> callDetailedWeather = service.getDetailedWeatherByCity(city,
+                "09a8a590d1b034cf0cd50777f7e675fd", 9, "metric");
+        callDetailedWeather.enqueue(new Callback<WeatherDetailedModel>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onResponse(Call<WeatherDetailedModel> call, Response<WeatherDetailedModel> response) {
 
-                   swipeRefresh.setRefreshing(false);
-               }
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
+                        mainCallback.onFinished();
+                    }
 
-               if (response != null && response.isSuccessful()) {
-                   WeatherDetailedModel model = response.body();
+                    swipeRefresh.setRefreshing(false);
+                }
 
-                   setupWeatherDetailedFragmentAdapter(ConvertUtil.convertFromWeatherDetailModelToDetailAdapterData(model));
+                if (response != null && response.isSuccessful()) {
+                    WeatherDetailedModel model = response.body();
 
-               } else {
-                   Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-               }
-           }
+                    setupWeatherDetailedFragmentAdapter(ConvertUtil.convertFromWeatherDetailModelToDetailAdapterData(model));
 
-           @Override
-           public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
-               if(getActivity() != null && isAdded()){
-                   if(mainCallback != null){
-                       mainCallback.onFinished();
-                   }
+                } else {
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-                   swipeRefresh.setRefreshing(false);
-               }
+            @Override
+            public void onFailure(Call<WeatherDetailedModel> call, Throwable t) {
+                if (getActivity() != null && isAdded()) {
+                    if (mainCallback != null) {
+                        mainCallback.onFinished();
+                    }
 
-           }
-       });
+                    swipeRefresh.setRefreshing(false);
+                }
+
+            }
+        });
     }
+
     private void setupWeatherDetailedFragmentAdapter(List<WeatherDetailsFragmentAdapter.AdapterDetailModel> dataForAdapter) {
         WeatherDetailsFragmentAdapter detailsFragmentAdapter = new WeatherDetailsFragmentAdapter(dataForAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

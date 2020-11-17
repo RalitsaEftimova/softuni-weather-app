@@ -38,7 +38,6 @@ public class OverallTab extends Fragment {
     TextView detailedTypeWeather;
     ImageView weatherImageToday;
     CardView cardViewToday;
-
     TextView dateTomorrow;
     TextView weatherTypeTomorrow;
     TextView cloudinessPercentTomorrow;
@@ -70,7 +69,6 @@ public class OverallTab extends Fragment {
         detailedTypeWeather = view.findViewById(R.id.txt_detailed_type_weather);
         weatherImageToday = view.findViewById(R.id.img_weather_type);
         cardViewToday = view.findViewById(R.id.card_view_today);
-
         dateTomorrow = view.findViewById(R.id.tomorrow_date);
         weatherTypeTomorrow = view.findViewById(R.id.txt_tomorrow_weather_type);
         cloudinessPercentTomorrow = view.findViewById(R.id.txt_tomorrow_cloudy_percent);
@@ -89,8 +87,13 @@ public class OverallTab extends Fragment {
         dateTomorrow.setText(day + 1 + "/" + (month + 1) + "/" + year);
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
+        if ((latNet == 0.0) || (lonNet == 0.0)) {
+            getCurrentCityWeather(null, ((MainActivity) getActivity()).getCity());
+            getTomorrowCityWeather(null, ((MainActivity) getActivity()).getCity());
+        } else {
+            refresh();
+        }
 
-        refresh();
 
         return view;
     }
@@ -99,7 +102,8 @@ public class OverallTab extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        getCurrentCityWeather(null, ((MainActivity) getActivity()).getCity());
+        getTomorrowCityWeather(null, ((MainActivity) getActivity()).getCity());
     }
 
 
@@ -237,7 +241,7 @@ public class OverallTab extends Fragment {
         });
     }
 
-    public void getTomorrowCityWeather(final MainActivity.MainCallback mainCallback, String city){
+    public void getTomorrowCityWeather(final MainActivity.MainCallback mainCallback, String city) {
         WeatherService service = ((MainActivity) getActivity()).getWeatherService();
 
         Call<WeatherModelTomorrow> callTomorrowWeather = service.getTomorrowWeatherByCity(city,

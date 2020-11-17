@@ -46,7 +46,7 @@
                 android:id="@+id/img_weather"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="70dp"
                 android:layout_toEndOf="@+id/txt_details_weather"
                 android:layout_toRightOf="@+id/txt_details_weather" />
 
