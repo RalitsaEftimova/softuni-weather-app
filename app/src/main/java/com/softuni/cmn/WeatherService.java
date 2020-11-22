@@ -1,4 +1,4 @@
-package com.softuni.weatherModel;
+package com.softuni.cmn;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

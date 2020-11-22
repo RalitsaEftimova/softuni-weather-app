@@ -1,4 +1,4 @@
-package com.softuni.weatherModel;
+package com.softuni.cmn;
 
 import java.util.List;
 

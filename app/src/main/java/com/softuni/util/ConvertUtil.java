@@ -1,30 +1,18 @@
-package com.softuni.weatherapp;
+package com.softuni.util;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.softuni.weatherModel.WeatherDetailedModel;
-import com.softuni.weatherModel.WeatherModel;
-import com.softuni.weatherModel.WeatherService;
+import com.softuni.adapter.WeatherDetailsFragmentAdapter;
+import com.softuni.cmn.WeatherDetailedModel;
+import com.softuni.weatherapp.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.google.android.material.internal.ContextUtils.getActivity;
 
 
 public  class ConvertUtil  {

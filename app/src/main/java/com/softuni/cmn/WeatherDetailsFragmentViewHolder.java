@@ -1,4 +1,4 @@
-package com.softuni.weatherapp;
+package com.softuni.cmn;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -8,13 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softuni.weatherapp.R;
+
 public class WeatherDetailsFragmentViewHolder extends RecyclerView.ViewHolder {
-    TextView dateAndHour;
-    TextView detailsTypeWeather;
-    ImageView weatherPicture;
-    TextView detailsTemperature;
-    TextView detailsDescription;
-    CardView cardView;
+    public TextView dateAndHour;
+    public TextView detailsTypeWeather;
+    public ImageView weatherPicture;
+    public TextView detailsTemperature;
+    public TextView detailsDescription;
+    public CardView cardView;
 
     public WeatherDetailsFragmentViewHolder(@NonNull View itemView) {
         super(itemView);

@@ -1,4 +1,4 @@
-package com.softuni.weatherapp;
+package com.softuni.adapter;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.softuni.util.ConvertUtil;
+import com.softuni.weatherapp.R;
+import com.softuni.cmn.WeatherDetailsFragmentViewHolder;
+
 import java.util.List;
 
 
@@ -47,7 +50,7 @@ public class WeatherDetailsFragmentAdapter extends RecyclerView.Adapter<WeatherD
         return data.size();
     }
 
-    static class AdapterDetailModel {
+   public static class AdapterDetailModel {
         public String date;
         public String weather;
         public String weatherDesc;

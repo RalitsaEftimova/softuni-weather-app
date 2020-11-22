@@ -1,6 +1,6 @@
-package com.softuni.weatherapp;
+package com.softuni.fragment;
 
-import com.softuni.weatherModel.WeatherModel;
+import com.softuni.cmn.WeatherModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.softuni.weatherModel.WeatherModelTomorrow;
-import com.softuni.weatherModel.WeatherService;
+import com.softuni.cmn.WeatherModelTomorrow;
+import com.softuni.cmn.WeatherService;
+import com.softuni.util.ConvertUtil;
+import com.softuni.weatherapp.MainActivity;
+import com.softuni.weatherapp.R;
 
 import java.util.Calendar;
 
@@ -26,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OverallTab extends Fragment {
+public class OverallTabFragment extends Fragment {
 
     TextView currentDate;
     TextView weatherType;

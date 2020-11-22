@@ -15,9 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailsTab"
+        <activity android:name="com.softuni.fragment.DetailsTabFragment"
             tools:ignore="Instantiatable"></activity>
-        <activity android:name=".OverallTab"
+        <activity android:name="com.softuni.fragment.OverallTabFragment"
             tools:ignore="Instantiatable" />
         <activity android:name=".MainActivity">
             <intent-filter>

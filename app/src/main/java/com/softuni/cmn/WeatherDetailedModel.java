@@ -1,6 +1,4 @@
-package com.softuni.weatherModel;
-
-import com.google.gson.annotations.SerializedName;
+package com.softuni.cmn;
 
 import java.util.List;
 

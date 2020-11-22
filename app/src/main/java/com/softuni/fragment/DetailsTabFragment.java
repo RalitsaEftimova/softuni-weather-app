@@ -1,4 +1,4 @@
-package com.softuni.weatherapp;
+package com.softuni.fragment;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -13,8 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.softuni.weatherModel.WeatherDetailedModel;
-import com.softuni.weatherModel.WeatherService;
+import com.softuni.cmn.WeatherDetailedModel;
+import com.softuni.cmn.WeatherService;
+import com.softuni.util.ConvertUtil;
+import com.softuni.weatherapp.MainActivity;
+import com.softuni.weatherapp.R;
+import com.softuni.adapter.WeatherDetailsFragmentAdapter;
 
 import java.util.List;
 
@@ -22,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsTab extends Fragment {
+public class DetailsTabFragment extends Fragment {
     RecyclerView recyclerView;
     List<WeatherDetailedModel.WeatherDetailedData> data;
     double latNet;
