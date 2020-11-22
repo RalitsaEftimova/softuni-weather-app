@@ -33,24 +33,23 @@ public class DetailsTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_details_tab, container, false);
-
         recyclerView = view.findViewById(R.id.rec_view);
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
 
         latNet = ((MainActivity) getActivity()).lat;
         lonNet = ((MainActivity) getActivity()).lon;
         city = ((MainActivity) getActivity()).txtCity.getText().toString();
-        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+
+        getWeatherDetailedFromApi(null);
+        getDetailedCityWeather(null, city);
+
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 city = ((MainActivity) getActivity()).txtCity.getText().toString();
                 getDetailedCityWeather(null, city);
-
             }
         });
-        getWeatherDetailedFromApi(null);
-        getDetailedCityWeather(null, city);
-
         return view;
     }
 

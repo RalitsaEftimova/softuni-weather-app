@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public double lat;
     public double lon;
     private WeatherService weatherService;
+    private Location location;
 
 
     @SuppressLint("CutPasteId")
@@ -113,9 +114,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         if (isNetworkOnline()) {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            checkLocationPermission();
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            location = getLastKnowLocation();
+
             if (!(location == null)) {
                 setCityFromCoords(location);
 
@@ -127,34 +127,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setCityFromCoords(Location location) {
-        lat = location.getLatitude();
-        lon = location.getLongitude();
-        txtCity.setText(getLocationName(lat, lon));
-    }
-
-    private void setDefaultCityIfMissCoords() {
-        txtCity.setText(R.string.sofia);
-        city = txtCity.getText().toString();
-        Toast.makeText(this, "Your location didn't found.Displayed Sofia city", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
 
         if (isNetworkOnline()) {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            checkLocationPermission();
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            location = getLastKnowLocation();
             if (!(location == null)) {
-                lat = location.getLatitude();
-                lon = location.getLongitude();
-                txtCity.setText(getLocationName(lat, lon));
+                setCityFromCoords(location);
             } else {
-                txtCity.setText(R.string.sofia);
-                city = txtCity.getText().toString();
-                Toast.makeText(this, "Your location didn't found.Displayed Sofia city", Toast.LENGTH_SHORT).show();
+                setDefaultCityIfMissCoords();
             }
         } else {
             Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
@@ -167,17 +150,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    private final MainCallback mainCallback = new MainCallback() {
-        @Override
-        public void onFinished() {
-            hideProgressBar();
-        }
-    };
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -187,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             ((OverallTab) adapter.getItem(0)).getCurrentCityWeather(null, city);
             ((OverallTab) adapter.getItem(0)).getTomorrowCityWeather(null, city);
             ((DetailsTab) adapter.getItem(1)).getDetailedCityWeather(mainCallback, city);
-
 
         } else if (item.getItemId() == R.id.action_bar_refresh) {
             progressBar.setVisibility(View.VISIBLE);
@@ -210,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
                     ((DetailsTab) adapter.getItem(1)).getDetailedCityWeather(mainCallback, city);
                 }
 
-
             } else {
                 Toast.makeText(this, "No internet connection!", Toast.LENGTH_SHORT).show();
             }
@@ -219,7 +189,38 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
 
     }
-  
+
+    private Location getLastKnowLocation() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        checkLocationPermission();
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        return location;
+    }
+
+    private void setCityFromCoords(Location location) {
+        lat = location.getLatitude();
+        lon = location.getLongitude();
+        txtCity.setText(getLocationName(lat, lon));
+    }
+
+    private void setDefaultCityIfMissCoords() {
+        txtCity.setText(R.string.sofia);
+        city = txtCity.getText().toString();
+        Toast.makeText(this, "Your location didn't found.Displayed Sofia city", Toast.LENGTH_SHORT).show();
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    private final MainCallback mainCallback = new MainCallback() {
+        @Override
+        public void onFinished() {
+            hideProgressBar();
+        }
+    };
+
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
     }
@@ -291,17 +292,14 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
+
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        //Request location updates:0
                         locationManager.requestLocationUpdates("gps",
                                 400, 1, new LocationListener() {
                                     @Override
@@ -325,12 +323,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                     }
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
-                return;
             }
         }
     }
